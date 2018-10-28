@@ -115,7 +115,7 @@ void MessageManager::SendMessages()
 	for (; it!=m_vecMessages.end(); ++it)
 	{
 		std::string szIP;
-		bool r = getBuddy(pBuddys,(*it)->m_sReceiver.c_str(), szIP);
+		bool r = GetBuddy(pBuddys,(*it)->m_sReceiver.c_str(), szIP);
 		if(r && (*it)->Send(pFQManager, szIP.c_str())){
 			vecSucMsg.push_back((*it));
 		}
@@ -128,7 +128,7 @@ void MessageManager::SendMessages()
 
 }
 
-bool MessageManager::getBuddy(IFQBuddyCollectionPtr pBuddys, const char* pszBuddyName, std::string& szIP)
+bool MessageManager::GetBuddy(IFQBuddyCollectionPtr pBuddys, const char* pszBuddyName, std::string& szIP)
 {
 
 	for(int i=0; i<pBuddys->GetCount(); ++i)
@@ -138,7 +138,7 @@ bool MessageManager::getBuddy(IFQBuddyCollectionPtr pBuddys, const char* pszBudd
 		CString szLoginName = (char*)(pBuddy->GetName());
 		szLoginName.MakeLower();
 	
-	    if (szLoginName.Find(strlwr(const_cast<char *>(pszBuddyName))) >= 0){
+	    if (szLoginName.Find(strlwr(const_cast<char *>(pszBuddyName))) >= 0 || strcmp(pszBuddyName, "*") == 0){
 			szIP = (char *)pBuddy->GetIPValue();
 			return true;
 		}
@@ -157,6 +157,7 @@ void MessageManager::Save(char* pszFileName)
 
 	try
 	{
+		
 		int of = CFile::modeCreate | CFile::modeWrite | CFile::typeText;
 		CStdioFile f3(pszFileName, of);
 		//message format: receiver,time, message 
